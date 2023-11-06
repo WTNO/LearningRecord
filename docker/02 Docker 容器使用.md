@@ -170,21 +170,55 @@ Docker 开放了 5000 端口（默认 Python Flask 端口）映射到主机端�
 
 容器内部的 5000 端口映射到我们本地主机的 8000 端口上。
 
+### 网络端口的快捷方式
+通过 `docker ps` 命令可以查看到容器的端口映射，docker 还提供了另一个快捷方式 `docker port`，使用 `docker port` 可以查看指定 （ID 或者名字）容器的某个确定端口映射到宿主机的端口号。
 
+上面我们创建的 web 应用容器 ID 为 `2e58a95f87d2` 名字为 jolly_swanson
 
+我可以使用 `docker port 2e58a95f87d2` 或 `docker port jolly_swanson` 来查看容器端口的映射情况。
 
+![image](./img/02_17.png)
 
+### 查看 WEB 应用程序日志
+`docker logs [ID或者名字]` 可以查看容器内部的标准输出。
 
+![image](./img/02_18.png)
 
+`-f`: 让 `docker logs` 像使用 `tail -f` 一样来输出容器内部的标准输出。
 
+从上面，我们可以看到应用程序使用的是 5000 端口并且能够查看到应用程序的访问日志。
 
+### 查看WEB应用程序容器的进程
+我们还可以使用 `docker top` 来查看容器内部运行的进程
 
+![image](./img/02_19.png)
 
+### 检查 WEB 应用程序
+使用 `docker inspect` 来查看 Docker 的底层信息。它会返回一个 JSON 文件记录着 Docker 容器的配置和状态信息。
 
+![image](./img/02_20.png)
 
+### 停止 WEB 应用容器
+![image](./img/02_21.png)
 
+### 重启WEB应用容器
+已经停止的容器，我们可以使用命令 `docker start` 来启动。
 
+![image](./img/02_22.png)
 
+`docker ps -l` 查询最后一次创建的容器：
 
+![image](./img/02_23.png)
+
+正在运行的容器，我们可以使用 docker restart 命令来重启。
+
+### 移除WEB应用容器
+我们可以使用 docker rm 命令来删除不需要的容器
+
+![image](./img/02_24.png)
+
+删除容器时，容器必须是停止状态，否则会报如下错误
+
+![image](./img/02_25.png)
 
 
