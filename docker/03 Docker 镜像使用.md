@@ -109,3 +109,72 @@
 
     docker run -t -i runoob/ubuntu:v2 /bin/bash
 
+### 构建镜像
+我们使用命令 docker build ， 从零开始来创建一个新的镜像。为此，我们需要创建一个 Dockerfile 文件，其中包含一组指令来告诉 Docker 如何构建我们的镜像。
+
+    FROM    centos:6.7
+    MAINTAINER      Fisher "fisher@sudops.com"
+
+    RUN     /bin/echo 'root:123456' |chpasswd
+    RUN     useradd wtno
+    RUN     /bin/echo 'wtno:123456' |chpasswd
+    RUN     /bin/echo -e "LANG=\"en_US.UTF-8\"" >/etc/default/local
+    EXPOSE  22
+    EXPOSE  80
+    CMD     /usr/sbin/sshd -D
+
+每一个指令都会在镜像上创建一个新的层，每一个指令的前缀都必须是大写的。
+
+第一条FROM，指定使用哪个镜像源
+
+RUN 指令告诉docker 在镜像内执行命令，安装了什么。。。
+
+然后，我们使用 Dockerfile 文件，通过 docker build 命令来构建一个镜像。
+
+    docker build -t runoob/centos:6.7 .
+
+报错：
+
+![image](./img/03_10.png)
+
+解决办法：
+1. 在 `%userprofile%` 文件夹下创建一个 `.wslconfig` 文件(win  + r 打开)
+2. 内容为
+
+        [wsl2]
+        kernelCommandLine = vsyscall=emulate    
+3. 然后在cmd中执行 wsl --shutdown
+4. 重新启动docker即可
+
+成功执行
+
+![image](./img/03_11.png)
+
+参数说明：
+- `-t` ：指定要创建的目标镜像名
+- `. `：Dockerfile 文件所在目录，可以指定Dockerfile 的绝对路径
+
+使用docker images 查看创建的镜像已经在列表中存在,镜像ID为 `042fa4f12e30`
+
+![image](./img/03_12.png)
+
+我们可以使用新的镜像来创建容器
+
+    docker run -t -i runoob/centos:6.7  /bin/bash
+
+![image](./img/03_13.png)
+
+从上面看到新镜像已经包含我们创建的用户 runoob。
+
+### 设置镜像标签
+我们可以使用 docker tag 命令，为镜像添加一个新的标签。
+
+    docker tag 042fa4f12e30 runoob/centos:dev
+
+docker tag 镜像ID，这里是 `042fa4f12e30` ,用户名称、镜像源名(repository name)和新的标签名(tag)。
+
+使用 docker images 命令可以看到，ID为 `042fa4f12e30` 的镜像多一个标签。
+
+![image](./img/03_14.png)
+
+
