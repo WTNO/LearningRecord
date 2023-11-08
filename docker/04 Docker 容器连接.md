@@ -129,15 +129,20 @@ docker 连接会创建一个父子关系，其中父容器可以看到子容器�
 
     docker run -it --rm  ubuntu  cat etc/resolv.conf
 
+### 手动指定容器的配置
+如果只想在指定的容器设置 DNS，则可以使用以下命令：
 
+    docker run -it --rm -h host_ubuntu  --dns=114.114.114.114 --dns-search=test.com ubuntu
 
+参数说明：
+- `--rm`：容器退出时自动清理容器内部的文件系统。
+- `-h HOSTNAME` 或者 --hostname=HOSTNAME： 设定容器的主机名，它会被写到容器内的 /etc/hostname 和 /etc/hosts。
+- `--dns=IP_ADDRESS`： 添加 DNS 服务器到容器的 /etc/resolv.conf 中，让容器用这个服务器来解析所有不在 /etc/hosts 中的主机名。
+- `--dns-search=DOMAIN`： 设定容器的搜索域，当设定搜索域为 .example.com 时，在搜索一个名为 host 的主机时，DNS 不仅搜索 host，还会搜索 host.example.com。
 
+![image](./img/04_10.png)
 
-
-
-
-
-
+如果在容器启动时没有指定 `--dns` 和 `--dns-search`，Docker 会默认用宿主主机上的 `/etc/resolv.conf` 来配置容器的 DNS。
 
 
 
