@@ -168,14 +168,96 @@ services:
 
     docker-compose up -d
 
+![image](img/07_01.png)
+
+## yml 配置指令参考
+### version
+指定本 yml 依从的 compose 哪个版本制定的。
+
+### build
+指定为构建镜像上下文路径：
+
+例如 webapp 服务，指定为从上下文路径 ./dir/Dockerfile 所构建的镜像：
+```yml
+version: "3.7"
+services:
+  webapp:
+    build: ./dir
+```
+
+或者，作为具有在上下文指定的路径的对象，以及可选的 Dockerfile 和 args：
+```yml
+version: "3.7"
+services:
+  webapp:
+    build:
+      context: ./dir
+      dockerfile: Dockerfile-alternate
+      args:
+        buildno: 1
+      labels:
+        - "com.example.description=Accounting webapp"
+        - "com.example.department=Finance"
+        - "com.example.label-with-empty-value"
+      target: prod
+```
+
+- `context`：上下文路径。
+- `dockerfile`：指定构建镜像的 Dockerfile 文件名。
+- `args`：添加构建参数，这是只能在构建过程中访问的环境变量。
+- `labels`：设置构建镜像的标签。
+- `target`：多层构建，可以指定构建哪一层。
+
+### cap_add，cap_drop
+添加或删除容器拥有的宿主机的内核功能。
+```yml
+cap_add:
+  - ALL # 开启全部权限
+
+cap_drop:
+  - SYS_PTRACE # 关闭 ptrace权限
+```
 
 
+### cgroup_parent
+为容器指定父 cgroup 组，意味着将继承该组的资源限制。
+```yml
+cgroup_parent: m-executor-abcd
+```
 
+### command
+覆盖容器启动的默认命令。
+```yml
+command: ["bundle", "exec", "thin", "-p", "3000"]
+```
 
+### container_name
+指定自定义容器名称，而不是生成的默认名称。
+```yml
+container_name: my-web-container
+```
 
+### depends_on
+设置依赖关系。
+- `docker-compose up` ：以依赖性顺序启动服务。在以下示例中，先启动 db 和 redis ，才会启动 web。
+- `docker-compose up SERVICE` ：自动包含 SERVICE 的依赖项。在以下示例中，docker-compose up web 还将创建并启动 db 和 redis。
+- `docker-compose stop` ：按依赖关系顺序停止服务。在以下示例中，web 在 db 和 redis 之前停止。
 
+```yml
+version: "3.7"
+services:
+  web:
+    build: .
+    depends_on:
+      - db
+      - redis
+  redis:
+    image: redis
+  db:
+    image: postgres
+```
 
-
+> 注意：web 服务不会等待 redis db 完全启动 之后才启动。
 
 
 
